@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <button id="loginBtn">登录</button>
+  <button id="publicBtn">访问公开接口</button>
+  <button id="secretBtn">访问需要登录才可以用的接口</button>
+  <script src="./jquery.js"></script>
+  <script>
+    $('#loginBtn').on('click',function(){
+      $.ajax({
+        type:'post',//get或post
+        url:'/login',//请求的地址
+        data:{
+          name:'test',
+          password:'test'
+        },//如果不需要传，则注释掉 请求的参数，a=1&b=2或{a:1,b:2}或者jq中的serialize方法，或者formData收集
+        dataType:'json',//text,json,xml,jsonp
+        success:function(result){//成功的回调函数
+          // console.log(result)
+          if(result.status == 200){
+            localStorage.setItem('token',result.token)
+            alert('登录成功')
+          }
+        }
+      })
+    })
+
+    $('#publicBtn').on('click',function(){
+      $.ajax({
+        type:'get',//get或post
+        url:'/pub',//请求的地址
+        // data:{},//如果不需要传，则注释掉 请求的参数，a=1&b=2或{a:1,b:2}或者jq中的serialize方法，或者formData收集
+        dataType:'json',//text,json,xml,jsonp
+        success:function(result){//成功的回调函数
+          console.log(result)
+        }
+      })
+    })
+
+    $('#secretBtn').on('click', function () {
+        $.ajax({
+          headers:{
+            'Authorization':'Bearer '+localStorage.getItem('token')
+          },
+          type: 'get',//get或post
+          url: '/user',//请求的地址
+          // data:{},//如果不需要传，则注释掉 请求的参数，a=1&b=2或{a:1,b:2}或者jq中的serialize方法，或者formData收集
+          dataType: 'json',//text,json,xml,jsonp
+          success: function (result) {//成功的回调函数
+            console.log(result)
+          }
+        })
+      })
+  </script>
+</body>
+</html>
